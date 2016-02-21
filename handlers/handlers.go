@@ -10,7 +10,7 @@ import (
 	"github.com/kruszczynski/blobfish-server/models"
 )
 
-var dbName = "blobfish.db"
+var dbName = "db/blobfish.db"
 
 // MemesIndex list the index of blobfish's memes
 func MemesIndex(w http.ResponseWriter, r *http.Request) {
