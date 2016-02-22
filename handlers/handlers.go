@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/boltdb/bolt"
+	"github.com/gorilla/mux"
 	"github.com/kruszczynski/blobfish-server/models"
 )
 
@@ -38,6 +40,20 @@ func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(meme)
+}
+
+// MemeDestroy destroys a meme
+func (h *Handler) MemeDestroy(w http.ResponseWriter, r *http.Request) {
+	memeID, err := strconv.ParseUint(mux.Vars(r)["memeID"], 10, 64)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	meme := &models.Meme{ID: uint64(memeID)}
+	if err := h.db.Update(meme.Destroy); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func openDB() *bolt.DB {

@@ -32,6 +32,19 @@ func (m *Meme) Save(tx *bolt.Tx) error {
 	return nil
 }
 
+// Destroy deletes a meme from the DB
+func (m *Meme) Destroy(tx *bolt.Tx) error {
+	bucket, err := tx.CreateBucketIfNotExists(bucketName)
+	if err != nil {
+		return err
+	}
+
+	if err := bucket.Delete(itob(m.ID)); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Meme) fromBolt(id []byte, url []byte) {
 	m.ID = binary.BigEndian.Uint64(id)
 	m.URL = string(url)
