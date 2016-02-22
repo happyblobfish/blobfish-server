@@ -5,7 +5,7 @@ RUN apt-get update -qq && apt-get install -y build-essential
 # Create app directory.
 ENV APP_HOME=${GOPATH}/src/github.com/kruszczynki/blobfish-server
 RUN mkdir -p $APP_HOME
-VOLUME ./db/
+VOLUME ${APP_HOME}/db
 WORKDIR $APP_HOME
 ADD . $APP_HOME
 
