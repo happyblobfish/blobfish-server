@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/kruszczynski/blobfish-server/models"
@@ -12,24 +11,29 @@ import (
 
 var dbName = "db/blobfish.db"
 
-// MemesIndex list the index of blobfish's memes
-func MemesIndex(w http.ResponseWriter, r *http.Request) {
-	db := openDB()
-	defer db.Close()
+// Handler is a struct with
+type Handler struct {
+	db *bolt.DB
+}
 
-	memes := models.AllMemes(db)
+// NewHandler returns an instance of DB handler
+func NewHandler() *Handler {
+	db := openDB()
+	return &Handler{db: db}
+}
+
+// MemesIndex list the index of blobfish's memes
+func (h *Handler) MemesIndex(w http.ResponseWriter, r *http.Request) {
+	memes := models.AllMemes(h.db)
 
 	json.NewEncoder(w).Encode(memes)
 }
 
 // MemesCreate creates a meme
-func MemesCreate(w http.ResponseWriter, r *http.Request) {
-	db := openDB()
-	defer db.Close()
-
+func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
 	meme := &models.Meme{URL: r.FormValue("url")}
 
-	if err := db.Update(meme.Save); err != nil {
+	if err := h.db.Update(meme.Save); err != nil {
 		log.Fatal(err)
 	}
 
@@ -37,7 +41,7 @@ func MemesCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func openDB() *bolt.DB {
-	db, err := bolt.Open(dbName, 0600, &bolt.Options{Timeout: 1 * time.Second})
+	db, err := bolt.Open(dbName, 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -9,10 +9,11 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	// Routes consist of a path and a handler function.
 
-	r.HandleFunc("/memes", handlers.MemesIndex).Methods("GET")
-	r.HandleFunc("/memes", handlers.MemesCreate).Methods("POST")
+	handler := handlers.NewHandler()
+
+	r.HandleFunc("/memes", handler.MemesIndex).Methods("GET")
+	r.HandleFunc("/memes", handler.MemesCreate).Methods("POST")
 
 	// Bind to a port and pass our router in
 	http.ListenAndServe(":8000", r)
