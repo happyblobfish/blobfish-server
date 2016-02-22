@@ -26,9 +26,11 @@ func NewHandler() *Handler {
 
 // MemesIndex list the index of blobfish's memes
 func (h *Handler) MemesIndex(w http.ResponseWriter, r *http.Request) {
-	memes := models.AllMemes(h.db)
+	memesCollection := models.NewMemesCollection()
 
-	json.NewEncoder(w).Encode(memes)
+	h.db.View(memesCollection.GetMemes)
+
+	json.NewEncoder(w).Encode(memesCollection.Memes)
 }
 
 // MemesCreate creates a meme
