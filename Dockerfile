@@ -1,14 +1,13 @@
-FROM golang:1.5.3
-
-RUN apt-get update -qq && apt-get install -y build-essential
+FROM nanoservice/go:latest
 
 # Create app directory.
-ENV APP_HOME=${GOPATH}/src/github.com/kruszczynki/blobfish-server
+RUN go get "github.com/gorilla/mux"
+RUN go get "github.com/boltdb/bolt"
+ENV APP_HOME=${GOPATH}/src/github.com/kruszczynski/blobfish-server
 RUN mkdir -p $APP_HOME
 VOLUME ${APP_HOME}/db
 WORKDIR $APP_HOME
 ADD . $APP_HOME
 
 # Build dependencies and the ws binary
-RUN go get ./...
 RUN go build
