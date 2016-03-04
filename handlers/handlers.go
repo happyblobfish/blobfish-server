@@ -35,7 +35,8 @@ func (h *Handler) MemesIndex(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(memesCollection.Memes)
 }
 
-// MemesCreate creates a meme
+// MemesCreate creates a meme from URL
+// Currently it's the only way to support Gifs
 // TODO: function too long
 func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
 	meme := &models.Meme{OriginalUrl: r.FormValue("url")}
@@ -63,6 +64,18 @@ func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	if err := h.db.Update(meme.Save); err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(meme)
+}
+
+func (h *Handler) MemesUpload(w http.ResponseWriter, r *http.Request) {
+	meme := new(models.Meme) // no OriginalUrl ATM
+	// TODO: DRY!!! Lines 76:81 are a great candidate for a Builder struct
+	if err := meme.SetData(r.Body, "image/png"); err != nil { // frontend currently supports only PNGs
+		log.Fatal(err)
+	}
 	if err := h.db.Update(meme.Save); err != nil {
 		log.Fatal(err)
 	}

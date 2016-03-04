@@ -15,6 +15,7 @@ func main() {
 
 	r.HandleFunc("/memes", handler.MemesIndex).Methods("GET")
 	r.HandleFunc("/memes", handler.MemesCreate).Methods("POST")
+	r.HandleFunc("/uploads", handler.MemesUpload).Methods("POST")
 	r.HandleFunc("/memes/{memeID}", handler.MemeGet).Methods("GET")
 	r.HandleFunc("/memes/{memeID}", handler.MemeDestroy).Methods("DELETE")
 
