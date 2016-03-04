@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -71,6 +72,8 @@ func (m *Meme) Save(tx *bolt.Tx) error {
 	// This returns an error only if the Tx is closed or not writeable.
 	// That can't happen in an Update() call so I ignore the error check.
 	id, _ := bucket.NextSequence()
+	m.ID = id
+	m.URL = fmt.Sprintf("%s/%d", "memes", id)
 	jsonString, err := json.Marshal(m)
 	if err != nil {
 		return err
@@ -78,7 +81,6 @@ func (m *Meme) Save(tx *bolt.Tx) error {
 	if err := bucket.Put(itob(id), jsonString); err != nil {
 		return err
 	}
-	m.ID = id
 	// write image binary to memes_bindata bucket
 	return m.writeBindata(tx, id)
 }
@@ -104,6 +106,10 @@ func (m *Meme) SetData(r io.Reader, contentType string) error {
 	}
 	m.bindata = data
 	return nil
+}
+
+func (m *Meme) ContentLength() int {
+	return len(m.bindata)
 }
 
 func (m *Meme) writeBindata(tx *bolt.Tx, id uint64) error {

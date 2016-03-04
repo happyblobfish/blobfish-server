@@ -38,10 +38,10 @@ func (h *Handler) MemesIndex(w http.ResponseWriter, r *http.Request) {
 // MemesCreate creates a meme
 // TODO: function too long
 func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
-	meme := &models.Meme{URL: r.FormValue("url")}
-	resp, err := http.Get(meme.URL)
+	meme := &models.Meme{OriginalUrl: r.FormValue("url")}
+	resp, err := http.Get(meme.OriginalUrl)
 	if err != nil {
-		log.Fatalf("%s %s", "http error", meme.URL)
+		log.Fatalf("%s %s", "http error", meme.OriginalUrl)
 		return
 	}
 	if resp.StatusCode != 200 || resp.ContentLength > maxImageContentLength {
@@ -74,8 +74,9 @@ func (h *Handler) MemesCreate(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) MemeGet(w http.ResponseWriter, r *http.Request) {
 	meme := h.findMeme(r)
 
-	h.db.View(meme.GetImage)                         // fetch image
-	w.Header().Set("Content-Type", meme.ContentType) // set mime
+	h.db.View(meme.GetImage)                                             // fetch image
+	w.Header().Set("Content-Length", strconv.Itoa(meme.ContentLength())) // set length
+	w.Header().Set("Content-Type", meme.ContentType)                     // set mime
 	if err := meme.WriteImage(w); err != nil {
 		log.Fatal("error writing binary data")
 	}
