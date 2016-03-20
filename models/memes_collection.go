@@ -18,8 +18,11 @@ func (mc *MemesCollection) GetMemes(tx *bolt.Tx) error {
 	b := tx.Bucket(bucketName)
 	c := b.Cursor()
 	for k, v := c.First(); k != nil; k, v = c.Next() {
-		meme := &Meme{}
-		meme.fromBolt(k, v)
+		meme, err := MemeFromBolt(k, v)
+		if err != nil {
+			// TODO: add logging?
+			continue
+		}
 		mc.Memes = append(mc.Memes, meme)
 	}
 	return nil
