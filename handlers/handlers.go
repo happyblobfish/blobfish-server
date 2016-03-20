@@ -8,7 +8,7 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
-	"github.com/kruszczynski/blobfish-server/models"
+	"github.com/happyblobfish/server/models"
 )
 
 var dbName = "db/blobfish.db"

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/kruszczynski/blobfish-server/handlers"
+	"github.com/happyblobfish/server/handlers"
 )
 
 func main() {

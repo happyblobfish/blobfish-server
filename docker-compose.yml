@@ -1,5 +1,5 @@
 web:
   build: .
-  command: ./blobfish-server
+  command: ./server
   ports:
     - "8000:8000"
