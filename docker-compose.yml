@@ -2,4 +2,4 @@ web:
   build: .
   command: ./server
   ports:
-    - "8000:8000"
+    - "9777:9777"
